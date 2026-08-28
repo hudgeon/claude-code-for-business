@@ -85,7 +85,7 @@ dialog. They picked **"at the access requests"** — the point where progress de
 someone else approving something. Their one change to the whole process: *"sort the IT
 access upfront."*
 
-Everything the admins must do is one page — **`docs/entra-app-registration.md` in the
+Everything the admins must do is one page — **`docs/microsoft-365-admin-setup.md` in the
 kit this vault shipped with.** Send it days ahead. The short version:
 
 - **Claude org admin:** add the Microsoft 365 connector to the workspace
@@ -196,7 +196,7 @@ mostly watching rather than doing."* That is the target.
 
 **The primary path needs no IDs, no config files and no fill-in blanks** — Microsoft
 365 connects through the app's own Connectors screen. What it does need is the admin
-work from `docs/entra-app-registration.md` finished: connector added to the workspace,
+work from `docs/microsoft-365-admin-setup.md` finished: connector added to the workspace,
 tenant consent granted, write tools on, `Mail.Send` revoked. **If you cannot confirm
 that (a written confirmation naming this person is the standard), say so before doing
 anything else** — Part A can run regardless, but B2 will stall at an "approval
@@ -884,7 +884,7 @@ dependency, sign-in is device-code, and the per-machine approval below is the wo
 silent failure this file has ever documented.
 
 **IT side:** the "Alternative: self-hosted app registration" section of
-`docs/entra-app-registration.md` — single-tenant app, public client flows ON, delegated
+`docs/microsoft-365-admin-setup.md` — single-tenant app, public client flows ON, delegated
 `Mail.ReadWrite` + `Files.ReadWrite` + `offline_access`, never `Mail.Send`, calendar =
 `Calendars.ReadWrite` never `.Shared` (the `.Shared` variant satisfied none of this
 server's calendar tools — four days, two support round-trips).
