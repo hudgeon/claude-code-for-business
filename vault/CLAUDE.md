@@ -4,7 +4,9 @@ You are working inside a shared vault. It syncs to every machine on the team thr
 SharePoint, so everything you write here is read by the whole team.
 
 **Read `About/<the organisation>.md` before doing anything substantive.** Then read the
-About file for whoever you are working with.
+About file for whoever you are working with. **Read `working-with-claude.md` once per
+session and coach from it** — it carries the working habits and the automation ladder,
+one habit at a time, never as a lecture.
 
 ## The autonomy boundary
 

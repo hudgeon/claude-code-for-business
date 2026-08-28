@@ -1,6 +1,7 @@
 # install-logs/ — one file per machine, never shared
 
-`machine-<n>-<role>.md`, using the template at the bottom of `SETUP-NEW-MACHINE.md`.
+`machine-<n>-<role>.md`, using the template at the bottom of your platform's runbook
+in `setup/` (`setup/windows.md` today).
 
 Per-machine files, not a shared log, because on a real install a prepared edit to a
 shared file — built against a version four minutes old — would have deleted 145 lines of

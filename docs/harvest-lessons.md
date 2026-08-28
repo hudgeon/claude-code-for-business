@@ -1,7 +1,8 @@
 # Harvesting lessons after an install
 
 This kit got good by folding real install logs and a week of real use back into the
-runbook — every ❌-struck correction in `SETUP-NEW-MACHINE.md` was paid for on a real
+runbook — every ❌-struck correction in the platform runbooks under `vault/setup/` was
+paid for on a real
 machine. The loop only works if it keeps running, so: about a week after an install,
 have each person run the prompt below on their own machine, then open a GitHub issue on
 this repo with the report (or a PR against the runbook, if the fix is obvious).
