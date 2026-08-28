@@ -6,7 +6,7 @@ machine. (1.4 over 1.3: the kit restructured for multiple platforms — this fil
 the rollout-order section below was added. No install procedure changed.)
 
 This version is rewritten from three lessons-learned reports covering the first three
-machines (one on 21 Aug, two on 25 Aug) plus the week of real use that followed. Where a
+machines (one first, two more four days later) plus the week of real use that followed. Where a
 step changed, the old instruction is struck through with ❌ and the reason is stated —
 never delete a correction, or it gets re-derived from scratch.
 
@@ -77,9 +77,9 @@ morning.
 
 ### 1. The IT request. This is where a person working alone gives up.
 
-Asked where she would have stopped doing this alone, the CEO did not pick a command or a
-dialog. She picked **"at the access requests"** — the point where progress depends on
-someone else approving something. Her one change to the whole process: *"sort the IT
+Asked where they would have stopped doing this alone, the CEO did not pick a command or a
+dialog. They picked **"at the access requests"** — the point where progress depends on
+someone else approving something. Their one change to the whole process: *"sort the IT
 access upfront."*
 
 Send this to whoever administers the tenant, in one message, before the day:
@@ -113,7 +113,7 @@ ahead, and have someone confirm in writing that the seat is assigned to this per
 
 ### 2. Ask them what they actually want handed over.
 
-Asked what she expected to be asked and never was, the CEO answered: **"what you actually
+Asked what they expected to be asked and never was, the CEO answered: **"what you actually
 wanted help with."** The procedure asks about permissions, folders and file formats. It
 never asks what the person wants.
 
@@ -363,7 +363,7 @@ measured: the Windows folder picker resolves a directory link to its target, so 
 you pick and the folder shown are different strings — which **manufactures a failure
 signal on a perfectly working machine, one step after the person has been asked to trust
 the process**. Both people on machines 2 and 3 named exactly this as the low point of
-their week, and one named it as where she would have given up. And after all that, **no
+their week, and one named it as where they would have given up. And after all that, **no
 session was ever proven to run on the short address, on any of the three machines.** It
 cost confidence and bought nothing. Use the real synced path. Keep the tree two levels
 deep with short kebab-case names, which is what the path budget actually needed.
@@ -776,7 +776,7 @@ had not come from the office. The rule lasted about ten minutes.
   and `style=` outright. If a draft comes out with no font and no branding, **the good
   surface had not finished connecting that session** — nothing about the mailbox, tenant,
   permission or signature settings has changed. Machine 1 was told the branding "could not
-  be done" when it had worked two days earlier. She was right and the assistant was wrong.
+  be done" when it had worked two days earlier. They were right and the assistant was wrong.
 - **The workaround that exists but is unproven:** build the draft as a reply into an
   existing thread, so the images come along server-side at no cost. **Nobody has checked
   the result by eye. Do not describe it as working until someone looks.**
@@ -827,7 +827,7 @@ they like.** It renders as a clean page, nothing installed. That is the whole kn
 mechanism in one tap.
 
 ⚠️ **Two corrections this page has already earned.** Read the **sent** items alongside the
-inbox: it told one person someone was waiting on her when she had already replied at 07:12
+inbox: it told one person someone was waiting on them when they had already replied early
 that morning, because the card was built from the inbound message as though it were the last
 word in the thread. And **list only what is still outstanding** — this page competes with the
 morning, and the person who has to request it, wait for it and read it at the busiest point
@@ -836,9 +836,9 @@ of the day stops asking. That is exactly why one of the three abandoned it.
 ## B7 — One real job, and one real draft
 
 **Not a demo. One actual piece of work, this week, finished properly — and theirs to
-choose.** Machine 3 brought her own job five minutes after the checks passed: cross-checking
+choose.** Machine 3 brought their own job five minutes after the checks passed: cross-checking
 twenty-five returned forms against a spreadsheet. It ran clean both ways and produced a
-written procedure. It was a better first job than the scripted one, because it was hers.
+written procedure. It was a better first job than the scripted one, because it was theirs.
 
 🔴 **Before they leave, actually write them one real email draft.** Across four days and
 twenty sessions on machine 2, **not one draft was ever written** — the drafts folder was
