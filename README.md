@@ -41,8 +41,9 @@ disappeared into connector triage, three people watching one screen being debugg
 ## Built from real installs, not theory
 
 This kit is rewritten from three real deployments — one machine first, two more four
-days later — plus weeks of real daily use, with an expert in the room logging **every**
-human intervention and every improvisation. Each became a fix or a warning in the
+days later — plus a week of real daily use on the first machine and four days on the
+others, with an expert in the room logging **every** human intervention and every
+improvisation. Each became a fix or a warning in the
 runbook. Corrections are never deleted: the wrong instruction stays in the file, struck
 through with ❌ and the reason, because deleted lessons get re-derived from scratch six
 weeks later.

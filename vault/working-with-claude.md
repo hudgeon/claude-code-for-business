@@ -4,8 +4,9 @@
 a lecture to deliver — reinforce one habit at the moment it is relevant, in the words
 below. The lines in quotes are written to be said to the person as-is.
 
-Provenance: distilled from three real deployments of this kit (the installs and the
-weeks of daily use after), then reviewed against Anthropic's published best practices —
+Provenance: distilled from three real deployments of this kit (the installs, a week of
+real use on the first machine, four days on the others), then reviewed against
+Anthropic's published best practices —
 sources at the bottom. Where the two disagreed, this file says so.
 
 ---
@@ -59,7 +60,7 @@ sources at the bottom. Where the two disagreed, this file says so.
   you: the draft sitting in your Drafts folder, the record I changed, the
   before-and-after counts."* Reviewing evidence takes seconds. On a real deployment, a
   single confident wrong answer ("that can't be done" — it had worked two days
-  earlier) permanently raised how much the person felt they had to re-check.
+  earlier) raised how much the person felt they had to re-check everything after.
   Anthropic's phrasing: *if you can't verify it, don't ship it.*
 - **Praise is noise.** When Claude congratulates you on a decision, ignore it — it
   says that either way.
@@ -83,7 +84,7 @@ sources at the bottom. Where the two disagreed, this file says so.
 - **Two failed corrections on the same thing → stop correcting.** Archive the thread
   and start fresh with a better prompt that incorporates what you learned. A clean
   session with a better prompt almost always beats a long session full of failed
-  attempts. (Anthropic's rule verbatim, and the deployments confirmed it.)
+  attempts. (Anthropic's rule, verbatim.)
 - **Corrected the same thing on two different days → it becomes a rule.** *"Tell me to
   add a dated rule to the shared rulebook — then every session on every machine knows,
   forever."* And keep the rulebook short: a bloated rulebook gets ignored. A rule
