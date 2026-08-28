@@ -1,9 +1,12 @@
 # Setting up Claude on a new Windows machine
 
-**Setup version 1.4 — 2026-08-28.** Write this number in the install log for this
-machine. (1.4 over 1.3: the kit restructured for multiple platforms — this file moved to
-`setup/windows.md` behind a dispatcher, `working-with-claude.md` joined the vault, and
-the rollout-order section below was added. No install procedure changed.)
+**Setup version 1.5 — 2026-08-28.** Write this number in the install log for this
+machine. (1.5 over 1.4: **Microsoft 365 now connects through the app's own Connectors
+screen — the official connector — instead of a hand-written config file.** The
+deployments this kit came from moved to it during their first week, and the config-file
+path's three worst failure modes — the per-machine silent approval, device-code codes
+expiring, Node as a connector dependency — do not exist on it. The self-hosted path
+survives in the appendix. 1.4 restructured the kit for platforms; no procedure changed.)
 
 This version is rewritten from three lessons-learned reports covering the first three
 machines (one first, two more four days later) plus the week of real use that followed. Where a
@@ -75,30 +78,36 @@ variables but **does not read PowerShell profiles**.
 These decided how the first three installs went. Do them days ahead, not on the
 morning.
 
-### 1. The IT request. This is where a person working alone gives up.
+### 1. The admin work. This is where a person working alone gives up.
 
 Asked where they would have stopped doing this alone, the CEO did not pick a command or a
 dialog. They picked **"at the access requests"** — the point where progress depends on
 someone else approving something. Their one change to the whole process: *"sort the IT
 access upfront."*
 
-Send this to whoever administers the tenant, in one message, before the day:
+Everything the admins must do is one page — **`docs/entra-app-registration.md` in the
+kit this vault shipped with.** Send it days ahead. The short version:
 
-- **Assign this person to the app registration.** Missing this is `AADSTS50105` at
-  sign-in and nothing else works.
-- **Graph permissions: `Mail.ReadWrite` and `Files.ReadWrite`.** Admin-consented.
-- 🔴 **Never `Mail.Send`. Not to be helpful, not to test something.** See A7 — once
-  consented, narrowing the config afterwards does not take it back.
-- **If calendar is wanted: ask for `Calendars.ReadWrite`. Not `Calendars.ReadWrite.Shared`.**
-  This cost four days and two rounds with the IT provider on machine 1. The connector's
-  own `lowerScopesFor()` in `dist/auth.js` maps `X.ReadWrite.All` down to `X.ReadWrite`,
-  `X.Read.All` and `X.Read`, but maps `X.ReadWrite.Shared` down to `X.Read.Shared` and
-  nothing else — so the granted permission satisfied none of the calendar tools.
-  Microsoft's documentation says otherwise. The connector disagrees and the connector
-  wins. Upgrading does not help: that function is byte-for-byte identical 32 releases
-  later. **The corrected ask is for less access than the first one, not more.**
-- **Confirm device-code sign-in is permitted for this app.** It is the only interactive
-  flow the connector offers.
+- **Claude org admin:** add the Microsoft 365 connector to the workspace
+  (Organization settings → Connectors).
+- **Entra Global Administrator:** the one-time tenant consent — until it is granted,
+  every user who clicks Connect sees *"approval required — your admin has been
+  notified"* and is stuck. A real deployment lost most of a group session to exactly
+  this screen.
+- **Write tools enabled, then `Mail.Send` revoked on the connector's enterprise app.**
+  Drafting is a write capability and the write set includes sending — they cannot be
+  separated at consent time, so the sequence is consent-then-revoke. 🔴 This revocation
+  is the whole safety model. B3 tests it empirically.
+- **Conditional Access check:** connector traffic comes from Anthropic's IP range, so
+  a sign-ins-only-from-our-network policy blocks it for everyone. Ask now.
+- **Written confirmation of who is enabled, naming the people.** "Reported done" with
+  no record produced a stall that was nobody's fault and everybody's problem.
+
+❌ *v1.4 asked IT for a custom single-tenant app registration with device-code sign-in
+here (`Mail.ReadWrite` + `Files.ReadWrite`, never `Mail.Send`, and the
+`Calendars.ReadWrite`-not-`.Shared` trap that cost four days). That path still works and
+lives in the appendix — but it is the fallback now, not the ask. Do not reinstate it as
+the default: its per-machine failure modes are the worst in this file's history.*
 
 ### 1b. Confirm they have a paid seat, assigned to them, before the day.
 
@@ -183,19 +192,19 @@ mostly watching rather than doing."* That is the target.
 
 ---
 
-## Fill these in before starting
+## Before starting — confirm the admin work is done
 
-```
-MS365_CLIENT_ID    = ..........................
-MS365_TENANT_ID    = ..........................
-```
+**The primary path needs no IDs, no config files and no fill-in blanks** — Microsoft
+365 connects through the app's own Connectors screen. What it does need is the admin
+work from `docs/entra-app-registration.md` finished: connector added to the workspace,
+tenant consent granted, write tools on, `Mail.Send` revoked. **If you cannot confirm
+that (a written confirmation naming this person is the standard), say so before doing
+anything else** — Part A can run regardless, but B2 will stall at an "approval
+required" screen, and finding out at sign-in wastes the person's patience at the worst
+moment.
 
-Both come from the app registration your IT admin runs from
-`docs/entra-app-registration.md` in the kit this vault shipped with. They are
-identifiers, not secrets — there is no password or client secret anywhere in this
-process. **If they are blank, stop and say so before doing anything else** — Part A can
-run without them, but nothing in Part B can, and finding out at sign-in wastes the
-person's patience at the worst moment.
+❌ *v1.4 had a two-ID fill-in block here for the self-hosted app registration. It moved
+to the appendix with the rest of that path.*
 
 ❌ *v1.1 also had a `SHAREPOINT_LIBRARY` blank here, and the step that needed it assumed
 it was already known. On machine 1 it was left empty and recovered only by finding the
@@ -217,7 +226,9 @@ installed on a paid plan, and Git for Windows is present. Each proved itself by 
 this session start at all.
 
 **Node is the one thing that has not proved itself**, because the session runs perfectly
-well without it and only the connector cares. The `npx` check is the test, A1b is the fix.
+well without it and only the document-to-PDF tool cares (A9 — and the self-hosted
+connector in the appendix, if that path is ever used). The `npx` check is the test, A1b
+is the fix.
 
 Note the machine facts for the log, quietly. **Note the doubled slash — see the shell
 rule above.**
@@ -236,8 +247,9 @@ powershell.exe -NoProfile -Command '$PSVersionTable.PSVersion'
 nothing at all, it did not run — that is the `/c` failure, not a missing tool.
 
 **If `npx --version` fails, that is expected on a fresh machine — go to A1b.** Do not
-carry on without it: the connector cannot start without Node, and the failure would
-otherwise surface at sign-in, long after the cause.
+carry on without it: the PDF tool cannot run without Node, and the failure would
+otherwise surface weeks later, at the first *"turn this into a PDF"*, long after the
+cause.
 
 If PowerShell reports 5.1, keep two things to yourself: `&&` does not work there (run
 things one at a time), and some of its write commands add a byte-order mark that corrupts
@@ -252,9 +264,9 @@ implying you looked.
 
 Skip entirely if `npx --version` already printed a version.
 
-Node is needed by the email connector in A7, not by Claude. **Install it without admin
-rights and without any prompt for them**, by unpacking the official build into their own
-profile. Tell them only: *"I'm installing one small component the email connection needs
+Node is needed by the document-to-PDF tool, not by Claude and not by the Microsoft 365
+connector. **Install it without admin rights and without any prompt for them**, by
+unpacking the official build into their own profile. Tell them only: *"I'm installing one small component the email connection needs
 — a couple of minutes."*
 
 ✅ **Verified twice, about three minutes each, no prompts, no elevation.**
@@ -440,125 +452,51 @@ content, and move on.
 
 🔴 **Any filename containing "conflicted copy" or a computer name → stop and say so.**
 
-## A7 — Write the connection config
+## A7 — Connect Microsoft 365 — in the app, not in a config file
 
-Write this as `.mcp.json` **in the vault root**, filling in the two IDs from the top. Use
-your file-writing tool, **not a shell heredoc** — heredocs on this shell fail silently on
-long content with mixed quoting, and create nothing.
+**Settings → Connectors is the whole mechanism now.** No file is written, nothing is
+installed, and there is nothing to sync — the connection is per person, made in the
+app's own UI, against Anthropic's official Microsoft 365 connector that IT enabled
+before the day.
 
-```json
-{
-  "mcpServers": {
-    "ms365": {
-      "command": "cmd",
-      "args": ["/c", "npx", "-y", "@softeria/ms-365-mcp-server@0.114.0",
-               "--org-mode", "--preset", "mail,files",
-               "--allowed-scopes", "Mail.ReadWrite Files.ReadWrite"],
-      "env": {
-        "MS365_MCP_CLIENT_ID": "THE_CLIENT_ID",
-        "MS365_MCP_TENANT_ID": "THE_TENANT_ID"
-      }
-    }
-  }
-}
-```
+Do it now, before the restart, so the restart can absorb it:
 
-(The `/c` inside this JSON is fine — it goes straight to the OS, not through Git Bash.)
+1. Have them click their name (bottom-left) → **Settings → Connectors**.
+2. Find **Microsoft 365** → **Connect**. Their browser opens; they pick their work
+   account and sign in as themselves. **They do the browser half — never touch a
+   password.**
+3. Expected on a healthy tenant: sign-in completes and the connector shows Connected.
+4. **"Approval required — your admin has been notified" means the tenant consent from
+   the pre-day list was not done.** Stop, say exactly that, and escalate on the
+   existing ticket — it is not their error and not yours, and no amount of retrying
+   moves it. Part A is still done and still useful; say so.
 
-✅ **Confirmed on machines 2 and 3: this file genuinely syncs**, and the
-`--allowed-scopes` narrowing carries through untouched with no send permission anywhere.
-The promise is **"zero configuration, one approval"** — not "zero clicks". Nobody edits a
-config file, copies an identifier or reads a connector guide. That part held twice.
+🔴 **Three field lessons about this screen, all paid for:**
 
-🔴 **`--preset` decides which tools exist, and it is not a permission.** Three separate
-sessions logged "no calendar access" and blamed a permission when the real cause was that
-calendar was not in the preset, in this file. The same thing then happened again with
-tasks. **If a tool family is missing, check the preset here BEFORE blaming a permission
-or raising a ticket.** To add a family, read the server's own vocabulary rather than
-guessing at it:
+- **The Connectors screen's Connected/Connect state can lag reality in both
+  directions.** It showed "Connect" while tools worked, and "Connected" while they
+  didn't. The tool list in a fresh session is the evidence; the screen is decoration.
+- **A full quit is part of connecting.** After Connect (and after any reconnect), quit
+  the app completely — system tray, or Task Manager killing every Claude process —
+  then a NEW session. Half-quit apps kept stale tokens alive for days.
+- **After ANY later permission change on the tenant, every user must disconnect,
+  reconnect and fully restart.** A scope change logged all three users out at the same
+  moment on a real deployment. That is why one person tests a change end to end before
+  the group reconnects (pre-day rule 3).
 
-```
-cmd.exe //c "npx -y @softeria/ms-365-mcp-server@0.114.0 --help"
-```
+❌ *v1.4's A7 wrote a `.mcp.json` config file for a self-hosted local server here, and
+A8 then hand-edited a per-machine approval into `%USERPROFILE%\.claude.json` — the
+worst silent failure in this file's history ("empty means never answered, not
+declined"). Both steps are GONE on this path: the official connector has no config
+file, no per-machine approval file, and no Node dependency. The self-hosted procedure
+survives in the appendix for tenants that cannot run the org connector. Do not
+reinstate it as the default.*
 
-Add the family to `--preset` and its scope to `--allowed-scopes` together — a family with
-no matching scope registers no tools, and the server says so if you ask it:
+## A8 — retired
 
-```
-Warning: allowed scopes disabled 87 tools.
-Missing scopes: Calendars.Read, Calendars.ReadWrite, ...
-```
-
-🔴 **The subtlety that makes or breaks the safety story.** `--allowed-scopes` only hides
-tools — it is **not** the control. Entra issues tokens carrying *every* scope ever
-consented for the app, no matter what is requested later. So "Claude cannot send" holds
-only because **`Mail.Send` was never consented in the first place.** If anyone ever adds
-it, narrowing the flags afterwards will not take it back; the consent has to be removed in
-Entra under **Enterprise applications → the app → Permissions**.
-
-## A8 — Approve the connection on this machine 🔴 the step that broke machines 2 and 3
-
-**This is the worst failure in the whole record, and it is invisible.** On both machines
-set up on the same day, the tools were silently absent after the restart. No error. No
-prompt. No log line naming the server. The connector's own log file was zero bytes and
-days old — the app had never even tried to start it. Run by hand, the server was perfectly
-healthy.
-
-The cause is a **per-machine approval that lives in the user's own profile and does not
-sync**, in `%USERPROFILE%\.claude.json`:
-
-```
-enabledMcpjsonServers    []      <- empty means NEVER ANSWERED, not declined
-disabledMcpjsonServers   []
-```
-
-Until that list contains `ms365`, the app does not read `.mcp.json` at all.
-
-**Three properties make it the worst step in the runbook:** there is no error to search
-for; **restarting does not fix it**, so the obvious remedy burns exactly the confidence
-the restart step has just spent; and ❌ *v1.1 said to expect a prompt asking to approve
-the server — **that prompt never appeared on either machine.** Do not rely on it. If it
-does appear, they approve it and this step is a no-op.*
-
-So write it yourself, now, before the restart. Two things make this delicate: the file
-lives outside the vault and outside the boundary the rulebook draws, so **it is genuinely
-their approval to give — ask in chat first**; and **the running app writes to this file
-continuously** (it was observed moving sixty bytes in two minutes with nobody touching
-it), so a rewrite would lose whatever it wrote meanwhile.
-
-**Snapshot, targeted edit, verify — never rewrite the file.** Write this helper with your
-file-writing tool (not a heredoc) to the temp folder, then run it with the Node from A1b:
-
-```js
-// approve-mcp.mjs — add one server to enabledMcpjsonServers for one project.
-import { readFileSync, writeFileSync, copyFileSync } from "node:fs";
-const [cfgPath, projectPath, server] = process.argv.slice(2);
-copyFileSync(cfgPath, cfgPath + ".before-setup");
-const cfg = JSON.parse(readFileSync(cfgPath, "utf8"));
-const before = Object.keys(cfg).length;
-cfg.projects ??= {};
-const key = Object.keys(cfg.projects).find((k) => k.toLowerCase() === projectPath.toLowerCase()) ?? projectPath;
-cfg.projects[key] ??= {};
-const list = new Set(cfg.projects[key].enabledMcpjsonServers ?? []);
-list.add(server);
-cfg.projects[key].enabledMcpjsonServers = [...list];
-cfg.projects[key].disabledMcpjsonServers ??= [];
-writeFileSync(cfgPath, JSON.stringify(cfg, null, 2));
-console.log(`top-level keys ${before} -> ${Object.keys(cfg).length}`);
-console.log(`project key: ${key}`);
-console.log(`enabled: ${JSON.stringify(cfg.projects[key].enabledMcpjsonServers)}`);
-```
-
-Top-level key count must be unchanged — or +1 if the file had no `projects` key at all —
-and `enabled` must contain `ms365`. The `.before-setup`
-copy stays until B1 has proved the tools are there.
-
-⚠️ **The one part still unverified: writing the entry BEFORE the folder has ever been
-opened.** On machines 2 and 3 the entry already existed (a session had opened the vault),
-and the fix was applied to it. If the app records the folder under a different spelling
-than the one you wrote, B1 will show no tools — the entry will exist by then, so set that
-one, quit and reopen once, and **log it**, because that is what tells the next install
-whether the pre-emptive write is reliable.
+A8 existed to repair the config-file path's silent per-machine approval. The primary
+path has no such step. **Numbering is kept so older install logs still make sense.**
+Self-hosting? The appendix carries the old A7+A8 in full, helper script included.
 
 ## A9 — Warm the document-to-PDF tool
 
@@ -621,9 +559,10 @@ Then tell them plainly what is about to happen:
 > start fresh on purpose, and everything so far is written down. I may need you to close it
 > once more straight after — that's normal, not a fault."*
 
-🔴 **Say the "possibly twice" line, even though A8 is meant to make the second one
-unnecessary.** A second restart that was announced costs nothing. An unannounced one that
-also does not fix anything is what burned two people's confidence.
+🔴 **Say the "possibly twice" line.** A second restart that was announced costs nothing.
+An unannounced one that also does not fix anything is what burned two people's
+confidence. (They signed in at A7, so the restart should be the last hurdle — but
+"should" has been wrong in this file before.)
 
 **On the other side, read this file again from the vault, read the install log to see how
 far Part A got, then resume at B1.**
@@ -640,77 +579,48 @@ would have sent readers chasing the wrong cause. Do not reinstate.*
 
 ## B1 — Prove the connection loaded, before anything else
 
-Two commands decide everything, and they separate the two failures that look identical:
+**Your own tool list is the only evidence that counts.** In this fresh session, check for
+the Microsoft 365 tools (they are named like `outlook_…`, `onedrive_…`).
 
-```
-cmd.exe //c "npx --version"
-```
-
-...then look at your own tool list for the `ms365` tools.
-
-| Runtime version | Email tools | Diagnosis | What to do |
-|---|---|---|---|
-| not found | absent | The app was never properly restarted | Quit from the system tray, reopen, new session on the vault |
-| works | absent | **The A8 approval is missing** | Fix the entry in `%USERPROFILE%\.claude.json`, then reopen once. **Do not just restart again — it will not help** |
-| works | present | Correct | Proceed |
-
-⚠️ **Settings → Connectors may or may not list a server that came from a project file. Do
-not treat its absence there as failure.** The tool list is the evidence.
-
-If you need to separate "cannot start" from "was never asked to start", run the server by
-hand — a healthy server answers instantly:
-
-```
-cmd.exe //c "npx -y @softeria/ms-365-mcp-server@0.114.0 --version"
-```
-
-🔴 **Do not hand-write the config into the session or launch the server yourself to get
-past this.** Working around it hides the finding. On machine 2 the restraint was the right
-call — the absence *was* the day's most valuable output.
-
-## B2 — Sign in to Microsoft 365
-
-⚠️ **Expected noise:** before sign-in, the token check returns
-`{"success":false,"message":"Login failed: No valid token found"}`. That is the correct
-answer, not a fault.
-
-🔴 **Do not generate the code until they tell you they are at a browser.** Codes last
-about fifteen minutes; one expired unused on machine 1 and a second had to be issued.
-
-Call the server's **`login`** tool. It returns a web address and a short code. Relay them
-exactly, in one line:
-
-> *"Go to **microsoft.com/devicelogin** on your phone or browser and enter the code
-> **XXX-XXX-XXX**, then sign in as yourself."*
-
-**They do the browser half — never ask them to read the code back, and never touch a
-password.** When they say done, call **`verify-login`**.
-
-**Be honest that this recurs.** ❌ *v1.1 said sign-in happens "once on each computer, then
-not again". It is not true: machine 3 signed in three times in five days, and named it as
-**"the main thing that puts me off"**.* Any permission change invalidates the cached token
-and it comes back as:
-
-```
-Silent token acquisition failed
-```
-
-The fix is to disconnect and reconnect the connector, then sign in again — and a fresh
-interactive sign-in may be escalated to admin consent, which sends it back to IT. **This is
-the strongest argument for getting every permission granted before the day.**
-
-✅ **Device-code sign-in was permitted in this tenant** — confirmed on three machines. The
-one contingency held in reserve, `AADSTS50105`, never fired.
-
-| Error | What it means | Who fixes it |
+| Tool list | Diagnosis | What to do |
 |---|---|---|
-| `AADSTS50105` | Not assigned to the app | IT: assign this person |
-| `AADSTS65001` | Graph permissions never admin-consented | IT: grant admin consent |
-| `AADSTS53003` | Conditional Access is blocking this sign-in | IT: scope the policy, or this design cannot be used here |
-| `AADSTS7000218` | Public client flows off | IT: set it back to Yes |
+| M365 tools present | Correct | Proceed to B2 |
+| Absent | The app kept a stale state through a soft restart | Full quit — Task Manager, every Claude process — reopen, NEW session on the vault |
+| Still absent | The A7 connection didn't take | Settings → Connectors: Disconnect if shown, Connect again (browser sign-in), full quit, new session |
+| Still absent after that | Tenant-side: consent or enablement missing | Stop and escalate on the ticket. Log the exact screen text. Not their error, not yours |
 
-None are recoverable by you or by them, and none are worth improvising around. **Part A is
-still done and still useful** — say so, so the session does not feel wasted.
+⚠️ **Do not trust the Connectors screen's Connected/Connect label in either direction** —
+on the real deployments it lagged reality both ways. The tool list is the evidence; the
+screen is decoration.
+
+🔴 **Do not work around an absence** — no hand-written config, no alternative route.
+Working around it hides the finding. On machine 2 the restraint was the right call — the
+absence *was* the day's most valuable output.
+
+## B2 — Confirm the sign-in holds
+
+They already signed in at A7, in their browser, as themselves — there is no separate
+sign-in step here. What B2 does is confirm the session actually carries it: make one real
+call (list the subjects of their three most recent emails) and watch it succeed.
+
+**If it fails here with the tools present**, the cached connection is stale:
+
+| Symptom | What it means | The fix |
+|---|---|---|
+| "Approval required / admin has been notified" in the browser at A7 | Tenant consent never granted | IT, on the existing ticket. Nothing on this machine fixes it |
+| Calls fail though tools exist; or `Silent token acquisition failed` | The connection predates a permission change | Settings → Connectors → Disconnect → Connect → sign in → full quit → new session |
+| Sign-in completes but calls still fail | This person may not be in the connector's assigned group | IT: confirm assignment, in writing |
+
+**Be honest that reconnects recur.** ❌ *v1.1 said sign-in happens "once on each computer,
+then not again". It is not true: machine 3 signed in three times in five days, and named
+it as **"the main thing that puts me off"**.* Every tenant-side permission change forces a
+disconnect-reconnect for every user — **which is the strongest argument for getting every
+permission granted before the day**, and for one person testing any later change before
+the group reconnects.
+
+None of the tenant-side failures are recoverable by you or by them, and none are worth
+improvising around. **Part A is still done and still useful** — say so, so the session
+does not feel wasted.
 
 ## B3 — Three checks, then the demonstration
 
@@ -723,15 +633,35 @@ line of body. Ask them to glance at Outlook: it is sitting in Drafts.
 **3. Files.** Read one file from their OneDrive; write a small test file; ask them, then
 delete the test file.
 
-**Then the demonstration.** ❌ *v1.1 said to attempt a send and watch it fail. **You cannot
-stage that attempt — there is no send tool anywhere in the surface.** Not blocked: absent.
-Corrected 21 Aug.* Showing the absence turned out to be the better demonstration anyway:
+**4. 🔴 Sending must be absent — test it, don't assume it.** Look for a send tool
+(`outlook_send_email`, `outlook_send_draft`, `outlook_forward_mail`). The expected state,
+because IT revoked `Mail.Send` on the connector's app:
 
-> *"Claude writes emails; you send them. Every time. That's not a promise — the capability
-> to send doesn't exist."*
+- **No send tool, or the send attempt is refused for missing permission → correct.** Log
+  which of the two it was — nobody has recorded yet whether the revocation removes the
+  tool or fails the call, and the next install wants to know.
+- **A send succeeds → stop immediately and report it.** The `Mail.Send` revocation from
+  the pre-day list was missed. The draft was addressed to themselves, so the only
+  recipient is them — but this machine is not fit for real work until IT fixes the
+  consent. Not a rule to add; a permission to remove.
+
+One layer of defence sits behind the revocation: the app never lets send-class tools be
+blanket-approved, so even a mis-consented tenant asks a human before each send. **That is
+defence-in-depth, not the control — the revocation is the control.**
+
+Then the demonstration, which is the single most reassuring fact in the whole setup:
+
+> *"Claude writes emails; you send them. Every time. That's not a promise — the ability
+> to send was taken away at the permission level, and we just proved it."*
 
 Machine 1's answer when asked whether that ever chafed: **"No, that's the right line."** Not
 a compromise tolerated. The correct arrangement, permanently.
+
+❌ *v1.1 said to attempt a send and watch it fail; v1.3 corrected that to showing the
+absence, because on the self-hosted path no send tool existed at all. On the official
+connector the send tools CAN exist if IT skips the revocation — which is why this is an
+empirical check again, with a stop-the-line outcome. History matters here: read both
+corrections before "simplifying" this step.*
 
 ## B4 — Writing rules and signature, BEFORE the first draft
 
@@ -771,8 +701,9 @@ had not come from the office. The rule lasted about ten minutes.
   including a 357 KB animated GIF, with no text in it at all — nothing readable by a
   machine, a screen reader, or anyone blocking images. Retrieving and re-attaching that
   costs roughly 476,000 characters each way and does not fit in a call.
-- **There are two mail surfaces here and they are not equivalent.** One accepts arbitrary
-  markup including images. The other sanitises to a bare tag allowlist and rejects `<img>`
+- **More than one mail route can exist in a session and they are not equivalent.** The
+  connector accepts rich HTML; fallback routes (a half-connected session improvising
+  through other tools) sanitise to a bare tag allowlist and reject `<img>`
   and `style=` outright. If a draft comes out with no font and no branding, **the good
   surface had not finished connecting that session** — nothing about the mailbox, tenant,
   permission or signature settings has changed. Machine 1 was told the branding "could not
@@ -860,8 +791,9 @@ for the rule, not against it.
 ## Before you finish — with them
 
 - Say plainly that the checks passed — or exactly which didn't.
-- Sweep the vault for anything that looks like a password, token or key. (The two IDs in
-  `.mcp.json` are identifiers, not secrets — they belong there.)
+- Sweep the vault for anything that looks like a password, token or key. On the primary
+  path nothing credential-shaped should exist in the vault at all — the connection lives
+  in the app, not in files.
 - Show them how to start tomorrow, and let them do it once themselves: Claude → **Code** →
   **Local** → **Select folder** → the vault. It is in recent folders from then on.
 - Point out that they never need the terminal pane, and that the **Chat** tab is a different
@@ -904,33 +836,109 @@ people's confidence were normal output nobody had warned them about.
 | `Not resetting hidden file - …desktop.ini` | A4, every machine | Nothing. Harmless |
 | "Online only" cloud icon still showing | Right after A4 pins the folder | Nothing. Harmless |
 | `AppXkv2jqn1pq8ajm0p5dhgqde7aafykkrrn` | A5 file-association check | Fine. Act only if the value contains `Word` |
-| `{"success":false,"message":"Login failed: No valid token found"}` | B2, before sign-in | The correct answer before signing in |
 | The old conversation still in the sidebar | After the restart | Normal. Start a new session anyway |
-| `ms365` missing from Settings → Connectors | Any time | Not evidence. A project-file server may not appear there |
+| Connectors screen says "Connect" though tools work (or "Connected" though they don't) | Any time | The screen lags reality in both directions. The tool list in a fresh session is the evidence |
+| "Approval required — your admin has been notified" | A7 first connect | Not noise — the tenant consent is missing. Stop and escalate; retrying does nothing |
 
 ---
 
 ## Appendix — what is organisation-specific
 
-Everything else is portable as written. Swap: the two IDs at the top; the `About/`
-folder, which ships as a worked example for a fictional organisation (see
-`About/README.md` — replace every file before the first install); and in
-`tools/pdf/make-pdf.mjs` the `ACCENT` colour and `logo.png` (the tool itself is
-portable).
+Everything else is portable as written. Swap: the `About/` folder, which ships as a
+worked example for a fictional organisation (see `About/README.md` — replace every file
+before the first install); and in `tools/pdf/make-pdf.mjs` the `ACCENT` colour and
+`logo.png` (the tool itself is portable). The primary path has no per-organisation IDs
+in this file — the connector is configured tenant-side.
 
 ## Appendix — what is now settled, and what is still unverified
 
 ✅ **Settled on real machines, stop re-testing:** no admin rights needed anywhere in Part A
 (three machines); the Node unpack and PATH edit (twice, ~3 min, no prompts); the
-execution-policy change; `.mcp.json` genuinely syncs and the scope narrowing carries; device
-code is permitted in this tenant; the PDF pipeline end-to-end on a managed laptop, with no
-proxy trouble and no policy block on headless printing.
+execution-policy change; the official connector carrying live sessions day to day on all
+three machines (it is what the deployments actually run); the PDF pipeline end-to-end on a
+managed laptop, with no proxy trouble and no policy block on headless printing.
 
-⚠️ **Still unverified, and the log decides them:** writing the A8 approval *before* the vault
-folder has ever been opened; the reply-into-a-thread signature workaround, which nobody has
-checked by eye; and whether the whole procedure runs with **no expert in the room** — it
-never has. The preparation phase ran with zero assists on the two later machines, which is
-the closest we have come.
+⚠️ **Still unverified, and the log decides them:**
+
+- **A fresh machine has never been installed via A7's connector path by this runbook** —
+  the deployments migrated onto the official connector during their first week, after
+  installing the self-hosted way. The first clean run of v1.5 is the real test; log hard.
+- **Whether revoking `Mail.Send` removes the send tools or fails the call** — B3 logs
+  which.
+- The reply-into-a-thread signature workaround — still never checked by eye.
+- Whether the whole procedure runs with **no expert in the room** — it never has. The
+  preparation phase ran with zero assists on the two later machines; that is the closest
+  we have come.
+
+---
+
+## Appendix — the self-hosted connector (fallback path)
+
+**Use this only when the official connector is not an option** — no Claude org admin, a
+tenant that will not consent Anthropic's app, or a deliberate decision to hold the whole
+chain in your own app registration. This is the path v1.1–v1.4 documented and the first
+three deployments installed with, before migrating to the official connector. Its safety
+property is stronger in one way — `Mail.Send` is simply **never consented**, so there is
+nothing to revoke — and its operational cost is real: Node becomes a connector
+dependency, sign-in is device-code, and the per-machine approval below is the worst
+silent failure this file has ever documented.
+
+**IT side:** the "Alternative: self-hosted app registration" section of
+`docs/entra-app-registration.md` — single-tenant app, public client flows ON, delegated
+`Mail.ReadWrite` + `Files.ReadWrite` + `offline_access`, never `Mail.Send`, calendar =
+`Calendars.ReadWrite` never `.Shared` (the `.Shared` variant satisfied none of this
+server's calendar tools — four days, two support round-trips).
+
+**Machine side, replacing A7:** write this as `.mcp.json` in the vault root — with your
+file-writing tool, never a heredoc — filling in the two IDs from the registration:
+
+```json
+{
+  "mcpServers": {
+    "ms365": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "@softeria/ms-365-mcp-server@0.114.0",
+               "--org-mode", "--preset", "mail,files",
+               "--allowed-scopes", "Mail.ReadWrite Files.ReadWrite"],
+      "env": {
+        "MS365_MCP_CLIENT_ID": "THE_CLIENT_ID",
+        "MS365_MCP_TENANT_ID": "THE_TENANT_ID"
+      }
+    }
+  }
+}
+```
+
+(The `/c` inside the JSON is fine — it goes to the OS, not through Git Bash.) The file
+syncs, so later machines inherit it. `--allowed-scopes` only hides tools — **the absent
+consent is the control**, exactly as with the revocation on the primary path.
+
+**Machine side, replacing A8 — the per-machine approval. 🔴 This broke two of three
+machines, silently.** The app does not read `.mcp.json` until a per-machine approval
+exists in `%USERPROFILE%\.claude.json`:
+
+```
+enabledMcpjsonServers    []      <- empty means NEVER ANSWERED, not declined
+```
+
+No error, no prompt (the prompt the docs promise never appeared on any machine), and
+**restarting makes it worse** by burning the confidence the restart just spent. Ask the
+person's permission (the file is theirs, outside the vault), then snapshot → one
+targeted edit adding `"ms365"` to that list → verify by key count. The running app
+writes this file continuously — never rewrite it wholesale. v1.3's tested helper script
+for this lives in git history at this file's `A8` section, tag `v1.3`–`v1.4`.
+
+**Sign-in, replacing B2:** the server's `login` tool returns a URL and a short code —
+relay both, they enter the code at microsoft.com/devicelogin and sign in as themselves.
+🔴 Codes last ~15 minutes; never generate one until they say they are at a browser.
+Errors: `AADSTS50105` not assigned to the app · `AADSTS65001` consent missing ·
+`AADSTS53003` Conditional Access blocks device code (this path cannot work there) ·
+`AADSTS7000218` public client flows off. Expected noise before sign-in:
+`{"success":false,"message":"Login failed: No valid token found"}` — the correct answer,
+not a fault.
+
+**B3 on this path:** there is no send tool at all — absence is the demonstration, and a
+send that somehow succeeds means `Mail.Send` was consented and must be removed in Entra.
 
 ---
 
@@ -950,12 +958,11 @@ MACHINE
 THE QUESTIONS THAT DECIDE THE NEXT INSTALL
   Admin rights needed anywhere?                    no / prompt / denied
   Which route put the library on this machine?     Sync / Add-shortcut  (A3)
-  Did the A8 approval already exist, or did you write it?   and did the
-    pre-emptive write survive the restart?         (A8 — still unverified)
-  Did the MCP-approval PROMPT ever appear?         (it has not, on any machine)
+  A7 connect: clean, or "approval required"?       paste the exact screen text
   Tools present after the first restart?           yes / no — and what fixed it
-  Device code allowed?                             yes / blocked — paste the error
-  How many times did they sign in?
+  Did the Connectors screen's state match reality? (it has lied both ways)
+  B3 send check: tool absent, or call refused?     (nobody has logged which yet)
+  How many sign-ins / reconnects, and why each?
 
 WHAT A STRANGER WOULD HAVE HIT
   Every time a human stepped in — what they did, and why Claude couldn't
@@ -968,7 +975,7 @@ WHAT BROKE
   Step · what was expected · what happened · exact error text
 
 VERIFICATION
-  B3 checks: pass / fail each
+  B3 checks 1-4: pass / fail each — including the send-absence check
   Was a REAL draft written and seen by them before they left?   (B7)
   Were writing rules and the signature captured BEFORE the first draft?
   A9 PDF: built / failed (paste the error) / skipped

@@ -60,20 +60,23 @@ A sample of what broke on real machines, and what the kit does about it:
 |---|---|
 | The very first command failed **silently** — the shell rewrote it so it ran nothing and printed plausible output | Every command is written for the shell Claude actually runs in, and the trap leads the runbook |
 | **Five separate lookups** said the machine was broken when it was fine | "Enumerate, never predict" is the first rule in the runbook, ahead of every step |
-| The email tools were **silently absent** after the restart on two machines — no error, no prompt, and restarting again makes it worse | A dedicated step writes the per-machine approval the app never asks for, with a tested helper script |
+| The email tools were **silently absent** after the restart on two machines — no error, no prompt, and restarting again makes it worse | Microsoft 365 now connects through the app's own Connectors screen, where that failure class does not exist; the config-file path and its tested repair live in the appendix |
 | A convenience symlink made the folder picker show a "wrong" path — two users named it the low point of their week | The step is deleted. It manufactured a failure signal on working machines and bought nothing |
-| A calendar permission asked for one level too broad satisfied **none** of the calendar tools — four days, two IT round-trips | The IT request page names the exact scopes, including that trap |
+| A calendar permission asked for one level too broad satisfied **none** of the calendar tools — four days, two IT round-trips | The IT page pre-answers the scope questions for both connector paths, that trap included |
 | Across twenty sessions, the assistant **never once wrote the email draft** the whole safety model exists to hand over | The install ends by writing one real draft, not just proving that sending is impossible |
 | A whole group session disappeared into connector triage | The rollout order above |
 
 ## The safety model
 
-- **Claude cannot send email.** `Mail.Send` is never consented on the app
-  registration, so sending is absent at the permission layer — not blocked by a rule
-  software has to remember to obey. The install demonstrates the absence to the person.
+- **Claude cannot send email.** The Microsoft 365 connector's write set is consented,
+  then `Mail.Send` is revoked on its enterprise app in Entra — drafting works, sending
+  is absent at the permission layer, not blocked by a rule software has to remember to
+  obey. The app adds a second layer on its own: send-class tools can never be
+  blanket-approved. The install tests the absence empirically and stops the line if a
+  send ever succeeds.
 - **Delegated access only.** Claude signs in as the user, in the user's browser, and
-  sees only what that person already sees. No app-only permissions, no client secret,
-  nothing to rotate.
+  sees only what that person already sees. No passwords touched, no client secret,
+  nothing stored in files — the connection lives in the app's own Connectors screen.
 - **Recoverability-based autonomy.** The rulebook hands over everyday document work
   (edits and deletes are versioned and recycle-binned) and keeps bulk changes,
   anything unrecoverable, and anything member-facing, financial, legal or HR with the
@@ -82,8 +85,9 @@ A sample of what broke on real machines, and what the kit does about it:
 ## Requirements (Windows path)
 
 - Windows 10/11.
-- Microsoft 365, with an admin who can register an Entra app —
-  [docs/entra-app-registration.md](docs/entra-app-registration.md), ~20 minutes, once.
+- Microsoft 365, with two admins' help once: a Claude org admin to enable the
+  Microsoft 365 connector, and an Entra Global Administrator for the tenant consent —
+  [docs/entra-app-registration.md](docs/entra-app-registration.md), ~15 minutes.
 - The Claude app on a paid plan, **with the seat assigned to the person** — an upgrade
   prompt at sign-in means the seat, not the app, and it can stall a whole session.
 - Git for Windows on each machine (the Code tab won't start a local session without
@@ -91,19 +95,19 @@ A sample of what broke on real machines, and what the kit does about it:
 
 ## Quick start
 
-1. **Days before, not the morning of:** IT registers the app
-   ([docs/entra-app-registration.md](docs/entra-app-registration.md)) and hands back
-   the client ID and tenant ID; seats are confirmed assigned.
+1. **Days before, not the morning of:** the admin work from
+   [docs/entra-app-registration.md](docs/entra-app-registration.md) — connector
+   enabled, tenant consent granted, write tools on, `Mail.Send` revoked, and a written
+   confirmation naming who is enabled. No IDs, no config files.
 2. Download this repo and put the `vault/` folder on the machine (anywhere — the
    install moves it into a synced SharePoint library and the session follows it).
-3. Fill the two IDs at the top of `vault/setup/windows.md`.
-4. Replace the worked-example `vault/About/` files with your own organisation
+3. Replace the worked-example `vault/About/` files with your own organisation
    ([vault/About/README.md](vault/About/README.md)).
-5. Open the Claude app → **Code** → **Local** → select the `vault` folder, and say:
+4. Open the Claude app → **Code** → **Local** → select the `vault` folder, and say:
 
    > **Read SETUP-NEW-MACHINE.md and walk me through it.**
 
-6. Follow the rollout order above: verify person one end to end before person two
+5. Follow the rollout order above: verify person one end to end before person two
    begins.
 
 ## What's in the box

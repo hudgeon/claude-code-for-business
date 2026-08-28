@@ -10,9 +10,10 @@ that differ, written during its drafting but **never executed on a real machine*
 
 - Library discovery: no registry — look under `~/Library/CloudStorage/` (A3).
 - Pinning: one genuine right-click — the folder → **Download Now** (A4).
-- Connector config: a Mac cannot run the `cmd /c` wrapper in the shared `.mcp.json` —
-  add a user-scope `ms365` entry to `~/.claude.json` with `"command": "npx"` instead;
-  user scope overrides the shared file, which stays untouched (A7).
+- Microsoft 365: **now platform-neutral.** The primary path connects through the
+  app's own Settings → Connectors screen (A7), identical on a Mac. Only the appendix's
+  self-hosted fallback differs: a Mac cannot run its `cmd /c` wrapper — a user-scope
+  `ms365` entry in `~/.claude.json` with `"command": "npx"` overrides the shared file.
 - The PDF tool works unchanged — it falls back from Edge to Chrome, `$TEMP` is
   `$TMPDIR` (A9; the tool itself is verified on macOS).
 - Everything in Part B — sign-in, the checks, writing rules, the sent-mail pass, the
@@ -24,8 +25,9 @@ that differ, written during its drafting but **never executed on a real machine*
   `git` shim that prompts to install Xcode command-line tools — that prompt mid-install
   is exactly the kind of ambush the Windows runbook exists to prevent).
 - Whether Node needs installing at all, and the no-admin unpack path on macOS.
-- The per-machine MCP approval (`enabledMcpjsonServers`) — the Windows runbook's worst
-  silent failure. Assume it behaves the same until a real machine says otherwise.
+- The per-machine MCP approval (`enabledMcpjsonServers`) — only relevant on the
+  appendix's self-hosted path; the primary connector path has no such step on any
+  platform.
 
 ## If the person wants to proceed anyway
 
