@@ -7,13 +7,13 @@ everything in their own voice, and **sends nothing, ever**.
 
 Nobody opens a terminal. A person installs two things by hand, opens a folder in the
 Claude app, and says one sentence. Claude does the rest — and **no administrator rights
-are needed anywhere** (verified on three machines).
+are needed anywhere**.
 
 ## Platforms
 
 | Platform | Status | Runbook |
 |---|---|---|
-| **Windows + Microsoft 365** | ✅ Tested — three real deployments, corrections folded in | [`vault/setup/windows.md`](vault/setup/windows.md) |
+| **Windows + Microsoft 365** | ✅ The tested path — every correction earned on a real machine | [`vault/setup/windows.md`](vault/setup/windows.md) |
 | **macOS + Microsoft 365** | 🚧 Planned — structure in place, unverified notes collected | [`vault/setup/mac.md`](vault/setup/mac.md) |
 | **Linux** | 🚧 Planned — open feasibility questions listed | [`vault/setup/linux.md`](vault/setup/linux.md) |
 
@@ -40,13 +40,12 @@ disappeared into connector triage, three people watching one screen being debugg
 
 ## Built from real installs, not theory
 
-This kit is rewritten from three real deployments — one machine first, two more four
-days later — plus a week of real daily use on the first machine and four days on the
-others, with an expert in the room logging **every** human intervention and every
-improvisation. Each became a fix or a warning in the
-runbook. Corrections are never deleted: the wrong instruction stays in the file, struck
-through with ❌ and the reason, because deleted lessons get re-derived from scratch six
-weeks later.
+This kit is rewritten from real deployments, with an expert in the room logging
+**every** human intervention and every improvisation. Each became a fix or a warning in
+the runbook. Corrections are never deleted: the wrong instruction stays in the file,
+struck through with ❌ and the reason, because deleted lessons get re-derived from
+scratch six weeks later. The runbook's header and the install logs carry the detailed
+provenance.
 
 The working habits that emerged were then reviewed against Anthropic's published best
 practices and folded into [`vault/working-with-claude.md`](vault/working-with-claude.md)
@@ -60,10 +59,10 @@ A sample of what broke on real machines, and what the kit does about it:
 |---|---|
 | The very first command failed **silently** — the shell rewrote it so it ran nothing and printed plausible output | Every command is written for the shell Claude actually runs in, and the trap leads the runbook |
 | **Five separate lookups** said the machine was broken when it was fine | "Enumerate, never predict" is the first rule in the runbook, ahead of every step |
-| The email tools were **silently absent** after the restart on two machines — no error, no prompt, and restarting again makes it worse | Microsoft 365 now connects through the app's own Connectors screen, where that failure class does not exist; the config-file path and its tested repair live in the appendix |
+| The email tools were **silently absent** after the restart — no error, no prompt, and restarting again makes it worse | Microsoft 365 now connects through the app's own Connectors screen, where that failure class does not exist; the config-file path and its tested repair live in the appendix |
 | A convenience symlink made the folder picker show a "wrong" path — two users named it the low point of their week | The step is deleted. It manufactured a failure signal on working machines and bought nothing |
 | A calendar permission asked for one level too broad satisfied **none** of the calendar tools — four days, two IT round-trips | The IT page pre-answers the scope questions for both connector paths, that trap included |
-| Across twenty sessions, the assistant **never once wrote the email draft** the whole safety model exists to hand over | The install ends by writing one real draft, not just proving that sending is impossible |
+| The assistant **never once wrote the email draft** the whole safety model exists to hand over — and nobody noticed for days | The install ends by writing one real draft, not just proving that sending is impossible |
 | A whole group session disappeared into connector triage | The rollout order above |
 
 ## The safety model
@@ -88,10 +87,11 @@ A sample of what broke on real machines, and what the kit does about it:
 - Microsoft 365, with two admins' help once: a Claude org admin to enable the
   Microsoft 365 connector, and an Entra Global Administrator for the tenant consent —
   [docs/entra-app-registration.md](docs/entra-app-registration.md), ~15 minutes.
-- The Claude app on a paid plan, **with the seat assigned to the person** — an upgrade
-  prompt at sign-in means the seat, not the app, and it can stall a whole session.
-- Git for Windows on each machine (the Code tab won't start a local session without
-  it — which is also why Claude can't install it for you).
+- The Claude Desktop app on a paid plan, **with the seat assigned to the person** — an
+  upgrade prompt at the Code tab means the seat, not the app, and it can stall a whole
+  session.
+- Git for Windows on each machine — the Code tab asks for it and won't start a local
+  session without it, which is also why Claude can't install it for you.
 
 ## Quick start
 
@@ -99,11 +99,18 @@ A sample of what broke on real machines, and what the kit does about it:
    [docs/entra-app-registration.md](docs/entra-app-registration.md) — connector
    enabled, tenant consent granted, write tools on, `Mail.Send` revoked, and a written
    confirmation naming who is enabled. No IDs, no config files.
-2. Download this repo and put the `vault/` folder on the machine (anywhere — the
+2. **Get Claude running on the machine:** follow Anthropic's
+   [desktop quickstart](https://code.claude.com/docs/en/desktop-quickstart) — download
+   the app, sign in, click the **Code** tab, and install
+   [Git for Windows](https://git-scm.com/downloads/win) when it asks (restart the app
+   after). **Stop once the Code tab opens — the kit takes it from there.** If the Code
+   tab shows an upgrade prompt instead, the person's paid seat isn't assigned; fix
+   that before going further.
+3. Download this repo and put the `vault/` folder on the machine (anywhere — the
    install moves it into a synced SharePoint library and the session follows it).
-3. Replace the worked-example `vault/About/` files with your own organisation
+   Replace the worked-example `vault/About/` files with your own organisation
    ([vault/About/README.md](vault/About/README.md)).
-4. Open the Claude app → **Code** → **Local** → select the `vault` folder, and say:
+4. In the Code tab: **Local** → **Select folder** → pick the `vault` folder, and say:
 
    > **Read SETUP-NEW-MACHINE.md and walk me through it.**
 
