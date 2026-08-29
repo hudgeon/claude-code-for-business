@@ -1,9 +1,12 @@
 # Setting up Claude on a new machine — start here
 
 **You are Claude, and a person has just asked you to walk them through setting up this
-machine.** This file only routes you to the right runbook — the sentence they said to
-you ("read SETUP-NEW-MACHINE.md and walk me through it") is the same on every platform,
-and this file keeps it that way.
+machine.** The normal arrival: they said *"download the setup kit from
+github.com/hudgeon/claude-code-for-business and walk me through it"* and you cloned
+this repo — the clone is scratch; the runbook creates the real, synced vault and the
+session moves there partway through. (Arriving by an already-copied folder is the same
+thing: start here either way.) This file only routes you to the right runbook, so the
+person's sentence stays the same on every platform.
 
 1. **Detect the platform yourself** — do not ask the person. `uname` in your shell, or
    the presence of `C:\` and Git Bash, settles it.

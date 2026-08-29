@@ -431,8 +431,21 @@ three-click for them: right-click any `.md` file → **Open with** → **Choose 
 
 ## A6 — Create the vault, or confirm it
 
-**First machine in an organisation:** create the structure inside the synced library and
-**move** the supplied files in — `CLAUDE.md`, `About\`, `tools\`.
+**First machine in an organisation — two jobs, in this order:**
+
+**First, make `About/` real.** The kit ships with a fictional worked example
+(Northwind). Before it goes anywhere near the vault, **interview the person and
+rewrite those files for their actual organisation** — what the business does, the
+vocabulary that matters, one short file per team member, their named recurring jobs,
+and what they most want handed over (`About/README.md` describes each file's shape).
+Ten minutes of questions, one at a time; write the files from their answers and show
+them what you wrote. Asked afterwards what the original deployments' setup never
+asked, the CEO said: *"what you actually wanted help with."* This is where that gets
+asked.
+
+**Then create the structure inside the synced library and MOVE the files in** —
+`CLAUDE.md`, the rewritten `About\`, `tools\`. The fetched kit folder is scratch;
+nothing stays behind in it.
 
 🔴 **Move, never copy.** Machine 1 copied, and three diverging copies of the rulebook
 existed for an hour before anyone noticed.

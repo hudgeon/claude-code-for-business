@@ -27,15 +27,16 @@ What it looked like in the businesses this kit was built in:
 
 ## How it works — one sentence, literally
 
-This kit is a folder you download. Inside it is a set-up file **written to Claude,
-not to you**. You open the folder in the Claude app and say:
+You don't download anything. Once the Claude app is on the machine, you say:
 
-> **Read SETUP-NEW-MACHINE.md and walk me through it.**
+> **Download the setup kit from github.com/hudgeon/claude-code-for-business and walk
+> me through it.**
 
-Claude sets *itself* up: finds your synced company files, connects to Microsoft 365,
-learns how the person writes, and finishes by completing one real piece of their
-work. Nobody opens a terminal, and no administrator password is needed on any
-machine. The person approves a few prompts and signs in once in their browser.
+Claude fetches this kit itself and sets *itself* up: creates your team's shared
+folder, connects to Microsoft 365, interviews you to learn your business and how you
+write, and finishes by completing one real piece of your work. Nobody opens a
+terminal, and no administrator password is needed on any machine. The person approves
+a few prompts and signs in once in their browser.
 
 ## What you need
 
@@ -64,16 +65,19 @@ machine. The person approves a few prompts and signs in once in their browser.
    [Git for Windows](https://git-scm.com/downloads/win) when it asks. **Stop when
    the Code tab opens — the kit takes it from there.** (An upgrade prompt at the
    Code tab means that person's seat isn't assigned yet.)
-4. **Download this kit** (the green **Code** button above → **Download ZIP**) and
-   put the `vault` folder anywhere on the machine. Spend 20 minutes replacing the
-   fictional example company in `vault/About/` with short notes about your own
-   business — [vault/About/README.md](vault/About/README.md) shows what goes where.
-   Claude coaches far better when it knows who it's working for.
-5. **Say the sentence.** Code tab → **Local** → **Select folder** → the `vault`
-   folder → *"Read SETUP-NEW-MACHINE.md and walk me through it."* Claude drives from
-   here; the setup ends with the connection tested, a real draft in their Drafts
-   folder, proof that sending fails, and one real job done.
-6. **Let the first person work with it for a day or two. Then the next person, one
+4. **Say the sentence.** Code tab → **Local** → **Select folder** → pick any folder
+   (your Documents folder is fine — the setup moves itself into your company's
+   shared files partway through). Then say:
+
+   > **Download the setup kit from github.com/hudgeon/claude-code-for-business and
+   > walk me through it.**
+
+   Claude fetches the kit itself — Git is already on the machine from step 3 — and
+   drives from there: it interviews you to replace the kit's fictional example
+   company with your real one, connects Microsoft 365, and ends with the connection
+   tested, a real draft in your Drafts folder, proof that sending fails, and one
+   real job done.
+5. **Let the first person work with it for a day or two. Then the next person, one
    at a time.** 🔴 Never set people up as a group — configuration in a group is
    frustration multiplied by the number of people watching. The first time your team
    meets about Claude, every machine should already work, and the meeting should be
@@ -136,7 +140,7 @@ A sample of what broke on real machines, and what the kit does about it:
 ## What's in the box
 
 ```
-vault/                        ← the download; whatever goes on a machine is a copy of this
+vault/                        ← the kit; Claude fetches it and copies it onto each machine
 ├── SETUP-NEW-MACHINE.md      ← detects the OS, routes Claude to the platform runbook
 ├── setup/
 │   ├── windows.md            ← the tested runbook, written to Claude, not to you

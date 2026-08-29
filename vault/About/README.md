@@ -11,7 +11,10 @@ anything substantive.
 
 ## What to do
 
-Replace every file with your own organisation before the first install:
+Replace every file with the real organisation. **On the first machine, Claude does
+this with you**: the runbook has it interview the owner and rewrite these files from
+the answers before anything else uses them. Editing them by hand first works too, and
+later machines inherit whichever happened. What each file is for:
 
 | File | What it is for |
 |---|---|
