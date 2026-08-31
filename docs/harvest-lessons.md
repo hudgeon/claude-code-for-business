@@ -7,7 +7,7 @@ machine. The loop only works if it keeps running, so: about a week after an inst
 have each person run the prompt below on their own machine, then open a GitHub issue on
 this repo with the report (or a PR against the runbook, if the fix is obvious).
 
-Two design notes, both learned the hard way:
+Three design notes, all learned the hard way:
 
 - **The person will not remember what broke or how it was fixed. Claude's own record
   will.** So the prompt makes Claude mine the install log and session history *first*,
@@ -17,6 +17,13 @@ Two design notes, both learned the hard way:
   pass, and the person reviews the flagged judgment calls before anything leaves their
   machine. Error text stays verbatim (it is the most valuable content); names, paths,
   identifiers and anything quoted from real correspondence do not.
+- **The best findings are not in any log.** The most valuable report received so far came
+  from reading the kit's own files against each other and against how that machine was
+  really configured. It found a rule contradicting another rule thirteen lines away, a
+  safety claim that quietly stopped being true once a machine ran two connectors at once,
+  and a diagnosis table with no row for a failure that had been escalated to IT three
+  times. No install log would have surfaced any of those, and no person could have been
+  asked about them — so step 2b below asks for that pass explicitly.
 
 ## Send this to each person
 
@@ -42,6 +49,15 @@ Two design notes, both learned the hard way:
 > remember any of this. You have it written down. If the install log for this machine
 > is missing or thin, say so plainly in your report rather than filling the gap with
 > guesses.
+>
+> 2b. NOW READ THE KIT AGAINST ITSELF, and against this machine as it is actually set up
+> today. Still ask me nothing. Where do two instructions disagree — and which one does a
+> reader hit first? Where does a claim hold only for a configuration this machine no
+> longer has, or never had? Where was a correction applied in one place and left wrong in
+> another? Where did you hit the same wall more than once with no row in any
+> troubleshooting table for it? Quote both sides with the file and the line, and say
+> which version is right and why. This is not in any log and I cannot be asked about it,
+> and it has produced the most valuable findings this kit has had.
 >
 > 3. THEN ASK ME only what your record cannot tell you — how it felt, what confused
 > me, what I've quietly stopped using, what I'd have done without help in the room.
@@ -88,5 +104,8 @@ Two design notes, both learned the hard way:
 
 Fold what they prove back into the runbook **in place**, with the ❌ convention: strike
 the wrong instruction, state what replaced it and why, never delete it. A deleted
-correction gets re-derived from scratch six weeks later. Then bump the version at the
-top and note the change. PRs that follow that shape are very welcome here.
+correction gets re-derived from scratch six weeks later. 🔴 **Then apply that correction
+everywhere the old rule is stated — the most general statement of it first**, and grep the
+kit for the old wording before calling it done; a fix that lands in one section and not the
+other leaves the wrong version where the next reader meets it first. Then bump the version
+at the top and note the change. PRs that follow that shape are very welcome here.

@@ -126,9 +126,23 @@ this way:
   not to test something.** Entra issues tokens carrying every consented scope
   regardless of what a client requests, so a consent cannot be clawed back by client
   configuration.
-- Calendar, if wanted: **`Calendars.ReadWrite`, not `Calendars.ReadWrite.Shared`** —
-  on a real deployment the `.Shared` variant satisfied none of the local server's
-  calendar tools and cost four days and two support round-trips.
+- Calendar, if wanted: **`Calendars.ReadWrite`, not `Calendars.ReadWrite.Shared`** — on a
+  real deployment the `.Shared` variant satisfied **none** of the local server's calendar
+  tools and cost four days and two support round-trips. Two things learned since, both
+  worth knowing before you spend a day:
+  - 🔴 **Upgrading the server does not fix it.** A deployment traced the cause on 31 Aug
+    2026 to the scope-downgrade table in the package's `dist/auth.js`: it maps
+    `X.ReadWrite.All` down the full hierarchy, but maps `X.ReadWrite.Shared` only to
+    `X.Read.Shared` — so a `.Shared` grant can never satisfy a `.ReadWrite` requirement,
+    and they report it unchanged in the current release (0.148.0, checked the same day).
+    ⚠️ *We have not read that source ourselves. What is confirmed on real machines is the
+    behaviour.* "Try a newer version" is the obvious next move and it is a dead end.
+  - **Ask for the narrow scope on security grounds, because it genuinely is the safer
+    one.** `Calendars.ReadWrite` is that person's own diary. `.Shared` is their diary
+    **plus every delegated and shared calendar they can reach** — on a CEO's account, a
+    wide grant. This is the rare case where the permission that works and the permission
+    that is safer are the same request. Put it on the ticket that way: *narrowing* a
+    permission clears approval queues that *changing* one does not.
 - Assignment required = Yes; assign the named people; confirm in writing.
 - Device-code flow must be permitted for this app (`AADSTS53003` means Conditional
   Access blocks it, and this path cannot work there).

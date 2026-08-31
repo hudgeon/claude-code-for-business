@@ -102,7 +102,10 @@ This kit is rewritten from real deployments, with an expert in the room logging
 **every** human intervention and every improvisation. Each became a fix or a warning.
 Corrections are never deleted: the wrong instruction stays in the file, struck
 through with ❌ and the reason, because deleted lessons get re-derived from scratch
-six weeks later.
+six weeks later. And a correction is applied **everywhere the old rule is stated**, most
+general statement first — the kit broke that discipline on itself once, fixing a rule in
+a later section and leaving the wrong version in the earlier one where every reader meets
+it first.
 
 The working habits that emerged were reviewed against Anthropic's published best
 practices and folded into
@@ -121,6 +124,8 @@ A sample of what broke on real machines, and what the kit does about it:
 | A calendar permission asked for one level too broad satisfied **none** of the calendar tools — days lost to IT round-trips | The IT page pre-answers the scope questions for both connector paths, that trap included |
 | The assistant **never once wrote the email draft** the whole safety model exists to hand over — and nobody noticed for days | The install ends by writing one real draft, not just proving that sending is impossible |
 | A whole group session disappeared into connector triage | Step 6: one person at a time, never a group |
+| A machine ended up running **two** Microsoft 365 connectors — the ordinary outcome of migrating and not removing the first — which quietly voided the safety claim written for one | The runbook documents that state, what it costs, and how to remove one. The send check is re-run after any migration, never assumed |
+| One tool family was missing, so it was escalated to IT as a permission request three times. It was a one-line config edit | "All the tools missing is a connection problem; one family missing is a configuration problem" — its own row in the diagnosis table, ahead of the escalation path |
 
 ## The safety model, in detail
 

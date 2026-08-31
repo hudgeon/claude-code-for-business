@@ -74,8 +74,17 @@ reconnect.
   path.
 - 🔴 **If you see a filename containing "conflicted copy" or a machine name, STOP and tell
   the user.** OneDrive has kept two versions and nobody has noticed.
-- **Markdown (`.md`) for everything the assistant owns.** Word and PDF are *outputs* —
-  build them at the end, from a source file. Never make a `.docx` the master copy.
+- **The master is always a text file you own — `.md` or `.html`, both fine.** Word and
+  PDF are *outputs*, built at the end from that source. 🔴 **Never make a `.docx` or a
+  PDF the master copy.** Pick the format by what the document is: prose takes markdown;
+  a **designed** page — cards, colour coding, progress bars, a waiting-on table — takes
+  HTML, and routing one of those through markdown throws away most of what it is for.
+  See the PDF section below and `tools/pdf/README.md`.
+  ❌ *Until 31 Aug 2026 this read "markdown for everything the assistant owns". The
+  correction was made on 28 Aug in the PDF section thirteen lines below and not here, so
+  for three days the first rule a reader met was still the wrong one — and this file is
+  read top-down. Do not reinstate: markdown-only was never true, and a machine following
+  it rebuilds a designed page as prose. The half that never changed is the `.docx` rule.*
 - **Before writing any Excel or Word file:** snapshot it, make sure it is closed properly,
   write to the closed file, then verify every pre-existing row survived. Co-authoring
   against the cloud copy silently reverts writes made underneath it. **The same family of
@@ -98,6 +107,17 @@ reconnect.
   that arrive after a draft exists mean rework, and one email nearly went out wrong that way.
   If the answer does not come at setup, ask again at the first real draft, where answering
   costs nothing.
+- **Get the house words, and never get one wrong.** Every organisation has a handful of
+  terms whose misuse marks the writer as an outsider — who the customer is versus the
+  intermediary versus the supplier, whether the name takes "the", which product names are
+  capitalised. **Ask for them at setup, keep them in the "Vocabulary that matters" section
+  of `About/<the organisation>.md`, and check every outward draft against that list.** This
+  is not a style preference you can infer from tone: it is a *factual* error, "match their
+  voice" does not catch it, and it lands in exactly the copy where it costs most. *Added
+  31 Aug 2026. The **Vocabulary that matters** section of `About/<the organisation>.md`
+  already existed to hold these words — what was missing was any rule sending you to read
+  it, so the rulebook governed voice, signatures and HTML bodies and left the one error
+  type a reader cannot forgive.*
 - **Match the writing to the person you are working for — see `voice/<name>.md`.** Each
   voice file states explicitly which of the other people's rules it does **not** inherit.
   Rule bleed is the failure mode of a shared notes folder.
@@ -128,6 +148,15 @@ reconnect.
 Every rule added here carries **the date, who asked for it, and why**. When a rule is
 superseded, strike it through with ❌ and add "do not reinstate" — never delete it. Deleted
 rules get re-derived from scratch six weeks later.
+
+🔴 **Correct a rule everywhere it is stated, in the same edit, starting with the most
+general statement of it.** A correction applied only where you happened to notice the
+problem leaves the wrong version standing somewhere else — and the reader meets whichever
+comes first, not whichever is right. That is precisely what happened to the markdown rule
+in *Working with files*: corrected in the PDF section on 28 Aug 2026, left wrong thirteen
+lines above it, where every reader hits it first, for three days. **Before you call a
+correction done, search the whole file — and the rest of the kit — for the old wording.**
+"We know about it now" is not a fix; the next reader does not know. *Added 31 Aug 2026.*
 
 ## Rules added since setup
 
