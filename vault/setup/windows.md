@@ -1,12 +1,20 @@
 # Setting up Claude on a new Windows machine
 
-**Setup version 1.5 — 2026-08-28.** Write this number in the install log for this
-machine. (1.5 over 1.4: **Microsoft 365 now connects through the app's own Connectors
-screen — the official connector — instead of a hand-written config file.** The
-deployments this kit came from moved to it during their first week, and the config-file
-path's three worst failure modes — the per-machine silent approval, device-code codes
-expiring, Node as a connector dependency — do not exist on it. The self-hosted path
-survives in the appendix. 1.4 restructured the kit for platforms; no procedure changed.)
+**Setup version 1.6 — 2026-08-31.** Write this number in the install log for this
+machine. (1.6 over 1.5, all from one deployment's review, no step reordered: **a machine
+can run both connectors at once** — the ordinary outcome of 1.5's own migration — which
+voids the self-hosted path's no-send reassurance and is the real cause of the bare drafts
+B4 used to blame on a half-connected session; **one missing tool family is a configuration
+problem, not a connection problem**, which B1 had no row for and readers escalated to IT;
+the `.Shared` calendar trap gets its root cause, why upgrading is a dead end, and the
+security argument that makes it an easier ask; and B4 now asks for the organisation's
+house words alongside the writing rules. 1.5 over 1.4: **Microsoft 365 now connects
+through the app's own Connectors screen — the official connector — instead of a
+hand-written config file.** The deployments this kit came from moved to it during their
+first week, and the config-file path's three worst failure modes — the per-machine silent
+approval, device-code codes expiring, Node as a connector dependency — do not exist on it.
+The self-hosted path survives in the appendix. 1.4 restructured the kit for platforms; no
+procedure changed.)
 
 This version is rewritten from three lessons-learned reports covering the first three
 machines (one first, two more four days later) plus the week of real use that followed. Where a
@@ -598,9 +606,30 @@ the Microsoft 365 tools (they are named like `outlook_…`, `onedrive_…`).
 | Tool list | Diagnosis | What to do |
 |---|---|---|
 | M365 tools present | Correct | Proceed to B2 |
-| Absent | The app kept a stale state through a soft restart | Full quit — Task Manager, every Claude process — reopen, NEW session on the vault |
+| Mail and files present, **one family missing** (calendar, tasks) | **Not a connection fault** — read the note below the table before doing anything | Do **not** restart, reconnect, or raise a ticket yet |
+| **All** M365 tools absent | The app kept a stale state through a soft restart | Full quit — Task Manager, every Claude process — reopen, NEW session on the vault |
 | Still absent | The A7 connection didn't take | Settings → Connectors: Disconnect if shown, Connect again (browser sign-in), full quit, new session |
 | Still absent after that | Tenant-side: consent or enablement missing | Stop and escalate on the ticket. Log the exact screen text. Not their error, not yours |
+
+🔴 **All the tools missing is a connection problem. One family missing is a configuration
+problem. They share no fixes, and the fix for the first makes the second worse.** If
+`outlook_…` and `onedrive_…` are answering and only calendar or tasks is absent, then the
+connection, the sign-in and the tenant consent are all *fine* — restarting and reconnecting
+tests four things that already work, and it costs the person a quit, a reconnect and their
+confidence. Instead:
+
+- **Self-hosted path (appendix):** `--preset` in `.mcp.json` is the switch, and it ships as
+  `mail,files`. **No calendar or tasks tool will exist no matter what IT consented.** Add
+  the family to `--preset` *and* to `--allowed-scopes`, restart. One line, one minute.
+- **Official connector (A7):** there is no local config to read — so this is a scope
+  question, but a *narrow* one. Raise it as "the calendar tools are absent while mail and
+  files work", naming the family, not as "the connector is not working". A ticket that says
+  the connector is broken gets triaged as the connector being broken.
+
+*Added 31 Aug 2026. A deployment hit this three times in four days — calendar, then tasks,
+then nearly again — and two of the three went to their IT provider as permission requests
+when the fix was a one-line edit on the machine. This table had no row for it, so every
+reader fell through to "escalate".*
 
 ⚠️ **Do not trust the Connectors screen's Connected/Connect label in either direction** —
 on the real deployments it lagged reality both ways. The tool list is the evidence; the
@@ -608,7 +637,11 @@ screen is decoration.
 
 🔴 **Do not work around an absence** — no hand-written config, no alternative route.
 Working around it hides the finding. On machine 2 the restraint was the right call — the
-absence *was* the day's most valuable output.
+absence *was* the day's most valuable output. ⚠️ **This is about the tools being gone, not
+about one family being switched off.** Editing `--preset` to turn calendar on is the
+documented fix for a documented setting, not a workaround; standing up a second route to
+get mail working when mail is absent is the thing this rule forbids. If mail and files
+answer, you are not working around anything.
 
 ## B2 — Confirm the sign-in holds
 
@@ -658,6 +691,12 @@ because IT revoked `Mail.Send` on the connector's app:
   recipient is them — but this machine is not fit for real work until IT fixes the
   consent. Not a rule to add; a permission to remove.
 
+🔴 **Re-run this check after any change to how the machine connects, a migration most of
+all.** Moving from the self-hosted path to the official connector brings the send tools
+with it, and the self-hosted path's reassurance — "`Mail.Send` is never consented here" —
+says nothing about the connector now sitting beside it. See *Both connectors installed at
+once* in the appendix.
+
 One layer of defence sits behind the revocation: the app never lets send-class tools be
 blanket-approved, so even a mis-consented tenant asks a human before each send. **That is
 defence-in-depth, not the control — the revocation is the control.**
@@ -695,6 +734,17 @@ Rules seen so far, for calibration: never use em dashes (stated absolutely), be 
 considerate of the reader's time, two spaces after a full stop, a specific font and size,
 and every email carries the full signature, internal and external alike.
 
+**Ask for the house words in the same breath — they are not style, they are facts.** *"Are
+there words the business is fussy about? What you call your customers, anything outsiders
+get wrong?"* Most organisations have two or three: who counts as the customer versus the
+intermediary versus the supplier, whether the organisation's name takes "the", which
+product names are capitalised. **No amount of voice-matching catches these**, because
+getting one wrong is a factual error rather than a stylistic one — and it lands in
+member-facing copy, where it costs most. Write them into the **"Vocabulary that matters"**
+section of `About/<the organisation>.md`, not the voice file: they belong to the
+organisation, not to the person. *Added 31 Aug 2026 — the rulebook had rules for voice,
+signatures, drafts and HTML bodies, and none for vocabulary.*
+
 ⚠️ **A rule about how their correspondence looks must be shown to them rendered, not
 described.** A proposal to shorten the signature for internal colleagues was agreed to in
 the abstract and rejected on sight of the actual draft, because it read as though the mail
@@ -714,13 +764,24 @@ had not come from the office. The rule lasted about ten minutes.
   including a 357 KB animated GIF, with no text in it at all — nothing readable by a
   machine, a screen reader, or anyone blocking images. Retrieving and re-attaching that
   costs roughly 476,000 characters each way and does not fit in a call.
-- **More than one mail route can exist in a session and they are not equivalent.** The
-  connector accepts rich HTML; fallback routes (a half-connected session improvising
-  through other tools) sanitise to a bare tag allowlist and reject `<img>`
-  and `style=` outright. If a draft comes out with no font and no branding, **the good
-  surface had not finished connecting that session** — nothing about the mailbox, tenant,
-  permission or signature settings has changed. Machine 1 was told the branding "could not
-  be done" when it had worked two days earlier. They were right and the assistant was wrong.
+- 🔴 **More than one mail route can exist in a session and they are not equivalent.** One
+  accepts rich HTML; the other sanitises to a bare tag allowlist and rejects `<img>` and
+  `style=` outright. So the same draft comes out branded through one and stripped through
+  the other, **with nothing about the mailbox, tenant, permission or signature settings
+  having changed.** Machine 1 was told the branding "could not be done" when it had worked
+  two days earlier. They were right and the assistant was wrong.
+  - **The usual cause is two connectors installed at once** — the self-hosted server from
+    `.mcp.json` still running alongside the official connector, which is where a machine
+    lands if it migrated and never removed the first. See *Both connectors installed at
+    once* in the self-hosted appendix, including how to remove one.
+  - **So check, don't wait.** Read your own tool names before drafting; if branding came
+    out wrong, read them again. Which route a session gets is not predictable from anything
+    the person can see, so a draft is evidence about the route, not about the mailbox.
+  - ❌ *Until 31 Aug 2026 this said the cause was "the good surface had not finished
+    connecting that session", and told you to treat a bare draft as a half-connected
+    session. That sent readers to wait and retry a machine that was working exactly as
+    configured, and it never once named the second connector. Do not reinstate: waiting
+    fixes nothing, because both routes are fully connected.*
 - **The workaround that exists but is unproven:** build the draft as a reply into an
   existing thread, so the images come along server-side at no cost. **Nobody has checked
   the result by eye. Do not describe it as working until someone looks.**
@@ -875,10 +936,14 @@ managed laptop, with no proxy trouble and no policy block on headless printing.
 
 - **A fresh machine has never been installed via A7's connector path by this runbook** —
   the deployments migrated onto the official connector during their first week, after
-  installing the self-hosted way. The first clean run of v1.5 is the real test; log hard.
+  installing the self-hosted way — which is also how those machines ended up running both
+  connectors at once. The first clean run of v1.6 is the real test; log hard.
 - **Whether revoking `Mail.Send` removes the send tools or fails the call** — B3 logs
   which.
 - The reply-into-a-thread signature workaround — still never checked by eye.
+- **Removing the self-hosted server after migrating** — the procedure in the appendix is
+  written from what the install does in reverse; nobody has yet run it and confirmed a
+  single mail route survives. Log B1 and B3 either side of it.
 - Whether the whole procedure runs with **no expert in the room** — it never has. The
   preparation phase ran with zero assists on the two later machines; that is the closest
   we have come.
@@ -892,15 +957,61 @@ tenant that will not consent Anthropic's app, or a deliberate decision to hold t
 chain in your own app registration. This is the path v1.1–v1.4 documented and the first
 three deployments installed with, before migrating to the official connector. Its safety
 property is stronger in one way — `Mail.Send` is simply **never consented**, so there is
-nothing to revoke — and its operational cost is real: Node becomes a connector
-dependency, sign-in is device-code, and the per-machine approval below is the worst
-silent failure this file has ever documented.
+nothing to revoke — **and that sentence is true only of a machine running this path and
+nothing else** (see the next section, which is the state most migrating machines are
+actually in). Its operational cost is real: Node becomes a connector dependency, sign-in
+is device-code, and the per-machine approval below is the worst silent failure this file
+has ever documented.
+
+### 🔴 Both connectors installed at once — the configuration this file used to pretend away
+
+The two paths read as either/or above. **They are not mutually exclusive on a machine, and
+the ordinary way to end up running both is to follow this kit**: install the self-hosted
+way, migrate to the official connector during the first week — exactly what the three
+deployments did — and never remove the first one. `.mcp.json` sits in the vault root, it
+syncs, and nothing about connecting the official connector touches it. So this state is not
+an error someone made. It is the default outcome of the documented migration, and until
+31 Aug 2026 this file had no words for it at all.
+
+Two consequences, both of which have bitten:
+
+- **The no-send reassurance above is void the moment both are installed.** The self-hosted
+  path never consents `Mail.Send` — but the official connector alongside it brings
+  `outlook_send_mail`, `outlook_send_draft` and `outlook_forward_mail` with it, and the
+  `Mail.Send` revocation (IT page, task 3) is what removes them. **If you migrated onto the
+  official connector and skipped that revocation because "this path never consents send
+  anyway", the machine can send email.** B3's send check catches it — which is exactly why
+  B3 is an empirical test and not an assumption. Run it again after any migration.
+- **It explains the bare drafts, and B4's old explanation was wrong.** Two mail routes are
+  live, they sanitise HTML differently, and which one a session uses is **not predictable
+  from anything the person can see** — it has differed between sessions on the same machine
+  with nothing changed in between. A draft that came out with correct branding on Thursday
+  and unstyled on Friday is this, not the mailbox, the tenant, the signature settings or a
+  connector that "hadn't finished connecting". **Check which route you have — read your own
+  tool names — before drafting, and before telling anyone something cannot be done.**
+
+**Removing the self-hosted server once you have migrated** — do this, rather than leaving
+both running:
+
+1. Delete the `ms365` entry from `.mcp.json` in the vault root (delete the file if it holds
+   nothing else). 🔴 **That file syncs — this removes the server from every machine on the
+   team**, so it is a bulk change: get the human's go-ahead, and tell them who it affects.
+2. Remove `"ms365"` from `enabledMcpjsonServers` in each machine's
+   `%USERPROFILE%\.claude.json` — snapshot first, one targeted edit, verify by key count,
+   never rewrite that file wholesale (the running app writes it continuously).
+3. Full quit, new session, re-run **B1** and **B3**. B3 is not optional here: the send
+   surface changed when you migrated.
+
+*Added 31 Aug 2026, from a deployment that found itself running both and traced two
+apparently unrelated symptoms in this file to that one fact.*
 
 **IT side:** the "Alternative: self-hosted app registration" section of
 `docs/microsoft-365-admin-setup.md` — single-tenant app, public client flows ON, delegated
 `Mail.ReadWrite` + `Files.ReadWrite` + `offline_access`, never `Mail.Send`, calendar =
 `Calendars.ReadWrite` never `.Shared` (the `.Shared` variant satisfied none of this
-server's calendar tools — four days, two support round-trips).
+server's calendar tools — four days, two support round-trips). 🔴 **A newer server version
+does not fix `.Shared`, and the narrow scope is the safer ask as well as the working one** —
+both are on the IT page, in the words to put on the ticket.
 
 **Machine side, replacing A7:** write this as `.mcp.json` in the vault root — with your
 file-writing tool, never a heredoc — filling in the two IDs from the registration:
@@ -925,6 +1036,22 @@ file-writing tool, never a heredoc — filling in the two IDs from the registrat
 (The `/c` inside the JSON is fine — it goes to the OS, not through Git Bash.) The file
 syncs, so later machines inherit it. `--allowed-scopes` only hides tools — **the absent
 consent is the control**, exactly as with the revocation on the primary path.
+
+🔴 **`--preset` is the tool-family switch, and this example turns calendar and tasks OFF.**
+As written it gives mail and files only. A consent granted in Entra does **not** produce a
+tool here; the preset does. So when someone says "Claude can't see my calendar" and mail is
+working, this line is the first thing to read — not the connectors screen, not IT. Adding a
+family means editing **both** flags together, then a full quit and a new session:
+
+```
+"--preset", "mail,files,calendar",
+"--allowed-scopes", "Mail.ReadWrite Files.ReadWrite Calendars.ReadWrite"
+```
+
+They are two independent switches and both must name the family — ⚠️ nobody has logged what
+happens when only one of them is changed, so change both and don't find out. And the scope
+has to be one IT actually consented, or the tools appear and the calls fail. *Added 31 Aug
+2026 — see the note under B1 for what this cost.*
 
 **Machine side, replacing A8 — the per-machine approval. 🔴 This broke two of three
 machines, silently.** The app does not read `.mcp.json` until a per-machine approval

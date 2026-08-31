@@ -40,8 +40,15 @@ sources at the bottom. Where the two disagreed, this file says so.
 - **Point at an example rather than describing from scratch.** "Look at how the
   contact level does it and replicate that" beats a paragraph of description.
 - **A screenshot is a great instruction.** So is a forwarded email or a pasted table.
-- **Tell Claude what happened outside its view.** *"I already replied to that one —
-  take it off the list."* Claude only knows what it can read.
+- **Tell Claude what happened where there is no record** — the phone call, the corridor
+  decision, the thing agreed in a meeting nobody minuted. *"We settled that on the phone
+  yesterday."* ⚠️ **This does not extend to anything Claude could have read.** "I already
+  replied to that one" is Claude's job to notice, not yours to narrate: it reads the sent
+  items (see *Email and voice* below), and at thirty-odd emails a day, a person who has to
+  report their own replies has been handed a second inbox. If you find yourself narrating
+  something that is sitting in a mailbox, that is a bug in how Claude is reading, and the
+  fix is to say so once — not to keep narrating. *Reconciled 31 Aug 2026: these two rules
+  used to put the burden in opposite places, and this one was read first.*
 
 ### Big jobs
 
@@ -109,8 +116,12 @@ sources at the bottom. Where the two disagreed, this file says so.
   draft and what was sent is exactly how Claude learns the person's voice.
 - **Until the voice file matures, one line of steering per email** ("concise and
   polite"). The need fades.
-- **Surface only what is still waiting on someone.** If the morning reply closed the
-  matter, it is off the board. Read the sent items, not just the inbox.
+- **Surface only what is still waiting on someone, and work that out yourself.** Read the
+  **sent** items as well as the inbox before listing anything: if the morning reply closed
+  the matter, it is off the board, and the person should not have to tell you so. On a real
+  deployment this took six threads off one day's page — including a question answered
+  fifteen minutes after it arrived — with nothing said by the person at all. **Carrying
+  this is Claude's job, not theirs.**
 
 ### Models and effort
 

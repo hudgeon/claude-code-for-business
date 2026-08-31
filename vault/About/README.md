@@ -18,7 +18,7 @@ later machines inherit whichever happened. What each file is for:
 
 | File | What it is for |
 |---|---|
-| `northwind.md` → `<your-org>.md` | What the organisation is, who its members/customers are, which systems it runs, the recurring rhythm of its year. The first thing every session reads. |
+| `northwind.md` → `<your-org>.md` | What the organisation is, who its members/customers are, which systems it runs, the recurring rhythm of its year — **and its "Vocabulary that matters": the two or three words outsiders get wrong.** The first thing every session reads. |
 | `robin.md`, `sam.md`, `jamie.md` → one per person | What the role owns, the named recurring jobs, and how to work well with the person. Short — a screen, not a dossier. |
 | `improvement-plan.md` | The team's own priority list, if one exists. The install's sent-mail pass (runbook B5) tests this list against what the mailbox actually shows — that comparison is one of the most valuable things the first session produces. |
 
